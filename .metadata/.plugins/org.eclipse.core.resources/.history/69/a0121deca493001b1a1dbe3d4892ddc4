@@ -1,0 +1,55 @@
+import java.net.*;
+import java.io.*;
+
+public class CarParkServer {
+	public static void main(String[] args) throws IOException {
+		
+		// define object
+		// set up class called serverSocket
+		ServerSocket ActionServerSocket = null;
+		// when server is waiting for a client to connect 
+		// listening = true 
+	    boolean listening = true;
+	    // name of the server 
+	    String ActionServerName = "ActionServer";
+	    // port number 
+	    int ActionServerNumber = 4321;
+	   
+	    // used for the constructor of the ActionServerStateCP
+	    // function inside the class with the same name 
+	    // when object is defined from a class it allows to get I/O
+	    double SharedVariable = 6;
+	    
+	    // define object of SharedActionState in global space 
+	    SharedActionStateCP ourSharedActionStateObject = new SharedActionStateCP(SharedVariable);
+	    
+	    // try and catch and exception if it doesn't work 
+	    try {
+	    	// make a server socket 
+	    	// define new Actionserversocket object 
+	    	// with actionservernumber as input 
+	        ActionServerSocket = new ServerSocket(ActionServerNumber);
+	      } 
+	      catch (IOException e) {
+	        System.err.println("Could not start " + ActionServerName + " specified port.");
+	        System.exit(-1);
+	      }
+	      // if no error go to the while loop
+	      System.out.println(ActionServerName + " started");
+	      
+	      
+	      while (listening){
+	      	// wait for a thread (for client to connect)
+	        // has to be in the correct order with 4 clients 
+	    	new ActionServerThreadCP(ActionServerSocket.accept(), "ActionServerThread1", ourSharedActionStateObject).start();
+	        new ActionServerThreadCP(ActionServerSocket.accept(), "ActionServerThread2", ourSharedActionStateObject).start();
+	        new ActionServerThreadCP(ActionServerSocket.accept(), "ActionServerThread3", ourSharedActionStateObject).start();
+	        new ActionServerThreadCP(ActionServerSocket.accept(), "ActionServerThread4", ourSharedActionStateObject).start();
+	        System.out.println("New " + ActionServerName + " thread started.");
+	      }
+	      ActionServerSocket.close();
+		
+
+	}
+
+}
